@@ -1,3 +1,5 @@
+import random
+
 from hero import Hero
 
 
@@ -33,6 +35,43 @@ class Team:
         '''Prints out all heroes to the console.'''
         for hero in self.heroes:
             print(hero.name)
+
+    def stats(self):
+        '''Print team statistics'''
+        for hero in self.heroes:
+            kd = hero.kills / hero.deaths if hero.deaths != 0 else hero.kills
+            print(f"{hero.name} Kill/Deaths:{kd}")
+
+    def revive_heroes(self, health=100):
+        '''Reset all heroes health to starting_health'''
+        for hero in self.heroes:
+            hero.current_health = hero.starting_health
+
+    def attack(self, other_team):
+        '''Battle each team against each other.'''
+
+        living_heroes = list()
+        living_opponents = list()
+
+        for hero in self.heroes:
+            living_heroes.append(hero)
+
+        for hero in other_team.heroes:
+            living_opponents.append(hero)
+
+        while len(living_heroes) > 0 and len(living_opponents) > 0:
+            # 1) Randomly select a living hero from each team
+            hero = random.choice(living_heroes)
+            opponent = random.choice(living_opponents)
+
+            # 2) Have the heroes fight each other
+            hero.fight(opponent)
+
+            # 3) Update living lists based on who is still alive
+            if not hero.is_alive() and hero in living_heroes:
+                living_heroes.remove(hero)
+            if not opponent.is_alive() and opponent in living_opponents:
+                living_opponents.remove(opponent)
 
 
 if __name__ == "__main__":

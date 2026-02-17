@@ -13,6 +13,8 @@ class Hero:
             name: String
             starting_health: Integer
             current_health: Integer
+            deaths: Integer
+            kills: Integer
         '''
         # abilities and armors don't have starting values,
         # and are set to empty lists on initialization
@@ -25,6 +27,9 @@ class Hero:
         # when a hero is created, their current health is
         # always the same as their starting health (no damage taken yet!)
         self.current_health = starting_health
+        # statistics
+        self.deaths = 0
+        self.kills = 0
 
     def add_ability(self, ability):
         '''Add ability to abilities list'''
@@ -80,6 +85,14 @@ class Hero:
         '''
         return self.current_health > 0
 
+    def add_kill(self, num_kills):
+        '''Update self.kills by num_kills amount'''
+        self.kills += num_kills
+
+    def add_death(self, num_deaths):
+        '''Update deaths with num_deaths'''
+        self.deaths += num_deaths
+
     def fight(self, opponent):
         '''Current Hero will take turns fighting the opponent hero passed in.
         '''
@@ -96,12 +109,23 @@ class Hero:
 
             # 3) After each round, check both heroes' status
             if not self.is_alive() and not opponent.is_alive():
+                # both heroes died -> each gets a kill and a death
+                self.add_kill(1)
+                opponent.add_kill(1)
+                self.add_death(1)
+                opponent.add_death(1)
                 print("Draw")
                 return
             elif not opponent.is_alive():
+                # self wins
+                self.add_kill(1)
+                opponent.add_death(1)
                 print(f"{self.name} won!")
                 return
             elif not self.is_alive():
+                # opponent wins
+                opponent.add_kill(1)
+                self.add_death(1)
                 print(f"{opponent.name} won!")
                 return
 
